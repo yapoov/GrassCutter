@@ -1,0 +1,1096 @@
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Internal;
+using UnityEngine.UI;
+
+public static partial class ExtensionGameObject {
+
+    // ############### ############### COMPONENT ############### ###############
+
+    ///<summary>GetComponent</summary>
+    public static T Gc<T>(this GameObject a) {
+        return a.GetComponent<T>();
+    }
+
+    ///<summary>GetComponentInChildren</summary>
+    public static T Gcic<T>(this GameObject a) {
+        return a.GetComponentInChildren<T>();
+    }
+
+    ///<summary>GetComponentInParent</summary>
+    public static T Gcip<T>(this GameObject a) {
+        return a.GetComponentInParent<T>();
+    }
+
+    ///<summary>GetComponents</summary>
+    public static T[] Gcs<T>(this GameObject a) {
+        return a.GetComponents<T>();
+    }
+
+    ///<summary>GetComponentsInChildren</summary>
+    public static T[] Gcsic<T>(this GameObject a) {
+        return a.GetComponentsInChildren<T>();
+    }
+
+    ///<summary>GetComponentsInParent</summary>
+    public static T[] Gcsip<T>(this GameObject a) {
+        return a.GetComponentsInParent<T>();
+    }
+
+    ///<summary>GetComponentsAll</summary>
+    public static List<T> Gca<T>(this GameObject a) {
+        return a.Contains<T>() ? a.Gcs<T>().Lis().Add<T>(a.Gcsic<T>()) : a.Gcsic<T>().Lis();
+    }
+
+    // ############### SIBLING ###############
+
+    ///<summary>sibling-р sibling-н Transform авна</summary>
+    public static Transform Sibling(this GameObject a, int sibling = 0) {
+        return a.ParentChild(0, sibling);
+    }
+
+    ///<summary>sibling-р sibling-н GameObject авна</summary>
+    public static GameObject SiblingGo(this GameObject a, int sibling = 0) {
+        return a.ParentChildGo(0, sibling);
+    }
+
+    ///<summary>sibling-р sibling-н T авна</summary>
+    public static T Sibling<T>(this GameObject a, int sibling = 0) {
+        return a.ParentChild<T>(0, sibling);
+    }
+
+    // ############### PARENT ###############
+
+    ///<summary>parent-р эцэгийн Transform авна</summary>
+    public static Transform Parent(this GameObject a, int parent = 0) {
+        Transform tf = a.transform.parent;
+        for (int i = 0; i < parent; i++)
+            tf = tf.parent;
+        return tf;
+    }
+
+    ///<summary>parent-р эцэгийн GameObject авна</summary>
+    public static GameObject ParentGo(this GameObject a, int parent = 0) {
+        return a.Parent(parent).gameObject;
+    }
+
+    ///<summary>parent-р эцэгийн T авна</summary>
+    public static T Parent<T>(this GameObject a, int parent = 0) {
+        return a.ParentGo(parent).Gc<T>();
+    }
+
+    // ############### CHILD ###############
+
+    ///<summary>childs-р хүүхдийн Transform авна</summary>
+    public static Transform Child(this GameObject a, params int[] childs) {
+        Transform tf = a.transform;
+        for (int i = 0; i < childs.Length; i++)
+            tf = tf.GetChild(childs[i]);
+        return tf;
+    }
+
+    ///<summary>childs-р хүүхдийн Transform авна</summary>
+    public static Transform Child(this GameObject a, string childs = "") {
+        return a.Child(childs.RgxSplit("\\D+").Parse(x => int.Parse(x)));
+    }
+
+    ///<summary>childs-р хүүхдийн GameObject авна</summary>
+    public static GameObject ChildGo(this GameObject a, params int[] childs) {
+        return a.Child(childs).gameObject;
+    }
+
+    ///<summary>childs-р хүүхдийн GameObject авна</summary>
+    public static GameObject ChildGo(this GameObject a, string childs = "") {
+        return a.Child(childs).gameObject;
+    }
+
+    ///<summary>childs-р хүүхдийн T авна</summary>
+    public static T Child<T>(this GameObject a, params int[] childs) {
+        return a.ChildGo(childs).Gc<T>();
+    }
+
+    ///<summary>childs-р хүүхдийн T авна</summary>
+    public static T Child<T>(this GameObject a, string childs = "") {
+        return a.ChildGo(childs).Gc<T>();
+    }
+
+    // ############### PARENT CHILD ###############
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн Transform авна</summary>
+    public static Transform ParentChild(this GameObject a, int parent = 0, params int[] childs) {
+        return a.ParentGo(parent).Child(childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн Transform авна</summary>
+    public static Transform ParentChild(this GameObject a, int parent = 0, string childs = "") {
+        return a.ParentGo(parent).Child(childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн GameObject авна</summary>
+    public static GameObject ParentChildGo(this GameObject a, int parent = 0, params int[] childs) {
+        return a.ParentGo(parent).ChildGo(childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн GameObject авна</summary>
+    public static GameObject ParentChildGo(this GameObject a, int parent = 0, string childs = "") {
+        return a.ParentGo(parent).ChildGo(childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн T авна</summary>
+    public static T ParentChild<T>(this GameObject a, int parent = 0, params int[] childs) {
+        return a.ParentGo(parent).Child<T>(childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн T авна</summary>
+    public static T ParentChild<T>(this GameObject a, int parent = 0, string childs = "") {
+        return a.ParentGo(parent).Child<T>(childs);
+    }
+
+    // ############### CHILDS ###############
+
+    ///<summary>Transform төрөлтэй хүүхдүүдийг авна</summary>
+    public static List<Transform> Childs(this GameObject a) {
+        return a.Childs<Transform>();
+    }
+
+    ///<summary>GameObject төрөлтэй хүүхдүүдийг авна</summary>
+    public static List<GameObject> ChildGos(this GameObject a) {
+        return a.Childs<GameObject>();
+    }
+
+    ///<summary>T төрөлтэй хүүхдүүдийг авна</summary>
+    public static List<T> Childs<T>(this GameObject a) {
+        List<T> lis = new List<T>();
+        for (int i = 0; i < a.transform.childCount; i++)
+            if (a.Child(i).Contains<T>())
+                lis.Add(a.Child<T>(i));
+        return lis;
+    }
+
+    // ############### ############### ACTIVE ############### ###############
+
+    ///<summary>active-г өөрчилнө</summary>
+    public static void Active(this GameObject a, bool active) {
+        a.SetActive(active);
+    }
+
+    ///<summary>sibling-р sibling-н Transform авна</summary>
+    public static void SiblingActive(this GameObject a, bool active, int sibling = 0) {
+        a.SiblingGo(sibling).Active(active);
+    }
+
+    ///<summary>parent-р эцэгийн active-г өөрчилнө</summary>
+    public static void ParentActive(this GameObject a, bool active, int parent = 0) {
+        a.ParentGo(parent).Active(active);
+    }
+
+    ///<summary>childs-р хүүхдийн active-г өөрчилнө</summary>
+    public static void ChildActive(this GameObject a, bool active, params int[] childs) {
+        a.ChildGo(childs).Active(active);
+    }
+
+    ///<summary>childs-р хүүхдийн active-г өөрчилнө</summary>
+    public static void ChildActive(this GameObject a, bool active, string childs = "") {
+        a.ChildGo(childs).Active(active);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн active-г өөрчилнө</summary>
+    public static void ParentChildActive(this GameObject a, bool active, int parent = 0, params int[] childs) {
+        a.ParentChildGo(parent, childs).Active(active);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийн active-г өөрчилнө</summary>
+    public static void ParentChildActive(this GameObject a, bool active, int parent = 0, string childs = "") {
+        a.ParentChildGo(parent, childs).Active(active);
+    }
+
+    // ############### HIDE ###############
+
+    ///<summary>нууна</summary>
+    public static void Hide(this GameObject a) {
+        a.Active(false);
+    }
+
+    ///<summary>sibling-р sibling-г нууна</summary>
+    public static void SiblingHide(this GameObject a, int sibling = 0) {
+        a.SiblingActive(false);
+    }
+
+    ///<summary>parent-р эцэгийг нууна</summary>
+    public static void ParentHide(this GameObject a, int parent = 0) {
+        a.ParentActive(false, parent);
+    }
+
+    ///<summary>childs-р хүүхдийг нууна</summary>
+    public static void ChildHide(this GameObject a, params int[] childs) {
+        a.ChildActive(false, childs);
+    }
+
+    ///<summary>childs-р хүүхдийг нууна</summary>
+    public static void ChildHide(this GameObject a, string childs = "") {
+        a.ChildActive(false, childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийг нууна</summary>
+    public static void ParentChildHide(this GameObject a, int parent = 0, params int[] childs) {
+        a.ParentChildActive(false, parent, childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийг нууна</summary>
+    public static void ParentChildHide(this GameObject a, int parent = 0, string childs = "") {
+        a.ParentChildActive(false, parent, childs);
+    }
+
+    // ############### SHOW ###############
+
+    ///<summary>харуулна</summary>
+    public static void Show(this GameObject a) {
+        a.Active(true);
+    }
+
+    ///<summary>sibling-р sibling-г харуулна</summary>
+    public static void SiblingShow(this GameObject a, int sibling = 0) {
+        a.SiblingActive(true);
+    }
+
+    ///<summary>parent-р эцэгийг харуулна</summary>
+    public static void ParentShow(this GameObject a, int parent = 0) {
+        a.ParentActive(true, parent);
+    }
+
+    ///<summary>childs-р хүүхдийг харуулна</summary>
+    public static void ChildShow(this GameObject a, params int[] childs) {
+        a.ChildActive(true, childs);
+    }
+
+    ///<summary>childs-р хүүхдийг харуулна</summary>
+    public static void ChildShow(this GameObject a, string childs = "") {
+        a.ChildActive(true, childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийг харуулна</summary>
+    public static void ParentChildShow(this GameObject a, int parent = 0, params int[] childs) {
+        a.ParentChildActive(true, parent, childs);
+    }
+
+    ///<summary>parent-р эцэгийн childs-р хүүхдийг харуулна</summary>
+    public static void ParentChildShow(this GameObject a, int parent = 0, string childs = "") {
+        a.ParentChildActive(true, parent, childs);
+    }
+
+    // ############### ############### TRANSFORM ############### ###############
+
+    // ############### TRANSFORM DIR PNT VEC ###############
+
+    ///<summary>transform.TransformDirection</summary>
+    public static Vector3 TfDir(this GameObject a, float x, float y, float z) {
+        return a.transform.TransformDirection(x, y, z);
+    }
+
+    ///<summary>transform.TransformDirection</summary>
+    public static Vector3 TfDir(this GameObject a, Vector3 dir) {
+        return a.transform.TransformDirection(dir);
+    }
+
+    ///<summary>transform.InverseTransformDirection</summary>
+    public static Vector3 TfInvDir(this GameObject a, float x, float y, float z) {
+        return a.transform.InverseTransformDirection(x, y, z);
+    }
+
+    ///<summary>transform.InverseTransformDirection</summary>
+    public static Vector3 TfInvDir(this GameObject a, Vector3 dir) {
+        return a.transform.InverseTransformDirection(dir);
+    }
+
+    ///<summary>transform.TransformPoint</summary>
+    public static Vector3 TfPnt(this GameObject a, float x, float y, float z) {
+        return a.transform.TransformPoint(x, y, z);
+    }
+
+    ///<summary>transform.TransformPoint</summary>
+    public static Vector3 TfPnt(this GameObject a, Vector3 pnt) {
+        return a.transform.TransformPoint(pnt);
+    }
+
+    ///<summary>transform.InverseTransformPoint</summary>
+    public static Vector3 TfInvPnt(this GameObject a, float x, float y, float z) {
+        return a.transform.InverseTransformPoint(x, y, z);
+    }
+
+    ///<summary>transform.InverseTransformPoint</summary>
+    public static Vector3 TfInvPnt(this GameObject a, Vector3 pnt) {
+        return a.transform.InverseTransformPoint(pnt);
+    }
+
+    ///<summary>transform.TransformVector</summary>
+    public static Vector3 TfVec(this GameObject a, float x, float y, float z) {
+        return a.transform.TransformVector(x, y, z);
+    }
+
+    ///<summary>transform.TransformVector</summary>
+    public static Vector3 TfVec(this GameObject a, Vector3 vec) {
+        return a.transform.TransformVector(vec);
+    }
+
+    ///<summary>transform.InverseTransformVector</summary>
+    public static Vector3 TfInvVec(this GameObject a, float x, float y, float z) {
+        return a.transform.InverseTransformVector(x, y, z);
+    }
+
+    ///<summary>transform.InverseTransformVector</summary>
+    public static Vector3 TfInvVec(this GameObject a, Vector3 vec) {
+        return a.transform.InverseTransformVector(vec);
+    }
+
+    // ############### TRANSFORM LOOK AT ###############
+
+    ///<summary>transform.LookAt</summary>
+    public static void TfLookAt(this GameObject a, Transform tf) {
+        a.transform.LookAt(tf);
+    }
+
+    ///<summary>transform.LookAt</summary>
+    public static void TfLookAt(this GameObject a, Transform tf, [DefaultValue("Vector3.up")] Vector3 up) {
+        a.transform.LookAt(tf, up);
+    }
+
+    ///<summary>transform.LookAt</summary>
+    public static void TfLookAt(this GameObject a, Vector3 pos) {
+        a.transform.LookAt(pos);
+    }
+
+    ///<summary>transform.LookAt</summary>
+    public static void TfLookAt(this GameObject a, Vector3 pos, [DefaultValue("Vector3.up")] Vector3 up) {
+        a.transform.LookAt(pos, up);
+    }
+
+    // ############### TRANSFORM ROTATE ###############
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, float x, float y, float z) {
+        a.transform.Rotate(x, y, z);
+    }
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, float x, float y, float z, [DefaultValue("Space.Self")] Space spc) {
+        a.transform.Rotate(x, y, z, spc);
+    }
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, Vector3 rot) {
+        a.transform.Rotate(rot);
+    }
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, Vector3 rot, [DefaultValue("Space.Self")] Space spc) {
+        a.transform.Rotate(rot, spc);
+    }
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, Vector3 axis, float ang) {
+        a.transform.Rotate(axis, ang);
+    }
+
+    ///<summary>transform.Rotate</summary>
+    public static void TfRot(this GameObject a, Vector3 axis, float ang, [DefaultValue("Space.Self")] Space spc) {
+        a.transform.Rotate(axis, ang, spc);
+    }
+
+    ///<summary>transform.RotateAround</summary>
+    public static void TfRotAround(this GameObject a, Vector3 pnt, Vector3 axis, float ang) {
+        a.transform.RotateAround(pnt, axis, ang);
+    }
+
+    // ############### TRANSFORM TRANSLATE ###############
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, float x, float y, float z) {
+        a.transform.Translate(x, y, z);
+    }
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, float x, float y, float z, [DefaultValue("Space.Self")] Space spc) {
+        a.transform.Translate(x, y, z, spc);
+    }
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, float x, float y, float z, Transform tf) {
+        a.transform.Translate(x, y, z, tf);
+    }
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, Vector3 tra) {
+        a.transform.Translate(tra);
+    }
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, Vector3 tra, [DefaultValue("Space.Self")] Space spc) {
+        a.transform.Translate(tra, spc);
+    }
+
+    ///<summary>transform.Translate</summary>
+    public static void TfTra(this GameObject a, Vector3 tra, Transform tf) {
+        a.transform.Translate(tra, tf);
+    }
+    
+    // ############### FIND ###############
+
+    ///<summary>name нэртэй Transform-г олж буцаана</summary>
+    public static Transform Find(this GameObject a, string name) {
+        return a.transform.Find(name);
+    }
+
+    ///<summary>name нэртэй GameObject-г олж буцаана</summary>
+    public static GameObject FindGo(this GameObject a, string name) {
+        return a.transform.Find(name).gameObject;
+    }
+
+    ///<summary>name нэртэй T-г олж буцаана</summary>
+    public static T Find<T>(this GameObject a, string name) {
+        return a.transform.Find(name).Gc<T>();
+    }
+
+    // ############### TRANSFORM ###############
+
+    ///<summary>байрыг нь солино</summary>
+    public static void SibIdx(this GameObject a, int i) {
+        a.transform.SetSiblingIndex(i);
+    }
+
+    ///<summary>байрлалын дугаарыг нь авна</summary>
+    public static int SibIdx(this GameObject a) {
+        return a.transform.GetSiblingIndex();
+    }
+
+    ///<summary>эхэнд байрлуулна</summary>
+    public static void SibFirst(this GameObject a) {
+        a.transform.SetAsFirstSibling();
+    }
+
+    ///<summary>сүүлд байрлуулна</summary>
+    public static void SibLast(this GameObject a) {
+        a.transform.SetAsLastSibling();
+    }
+
+    ///<summary>эцэгийг parTf-р солино</summary>
+    public static void Parent(this GameObject a, Transform parTf) {
+        a.transform.SetParent(parTf);
+    }
+
+    // ############### ############### OTHER ############### ###############
+
+    // ############### DESTROY ###############
+
+    ///<summary>хүүхдүүдийг устгана</summary>
+    public static void DestroyChilds<T>(this GameObject a, int sta = 0, int end = -1) {
+        List<T> lis = a.Childs<T>();
+        for (int i = sta, n = end < 0 ? lis.Count : end; i < n; i++)
+            ((MonoBehaviour)(object)lis[i]).gameObject.Destroy();
+    }
+
+    ///<summary>хүүхдүүдийг устгана</summary>
+    public static void DestroyChilds(this GameObject a, int sta = 0, int end = -1) {
+        a.DestroyChilds<GameObject>(sta, end);
+    }
+
+    ///<summary>устгана</summary>
+    public static void Destroy(this GameObject a, float t = 0) {
+        MonoBehaviour.Destroy(a, t);
+    }
+
+    // ############### MATERIAL COLOR ###############
+
+    ///<summary>renderer-н material-г авна</summary>
+    public static Material RenMat(this GameObject a) {
+        return a.Gc<Renderer>().material;
+    }
+
+    ///<summary>renderer-н material-уудыг авна</summary>
+    public static List<Material> RenMats(this GameObject a) {
+        return a.Gc<Renderer>().materials.Lis();
+    }
+
+    ///<summary>өнгө-г өөрчилнө</summary>
+    public static void RenMatCol(this GameObject a, Color col) {
+        a.RenMat().color = col;
+    }
+
+    ///<summary>өнгө-г өөрчилнө</summary>
+    public static void RenMatCol(this GameObject a, string name, Color col) {
+        a.RenMat().SetColor(name, col);
+    }
+
+    ///<summary>өнгө-г авна</summary>
+    public static Color RenMatCol(this GameObject a) {
+        return a.RenMat().color;
+    }
+
+    ///<summary>өнгө-г авна</summary>
+    public static Color RenMatCol(this GameObject a, string name) {
+        return a.RenMat().GetColor(name);
+    }
+
+    // ############### OTHER ###############
+
+    ///<summary>Contains Component</summary>
+    public static bool Contains<T>(this GameObject a) {
+        return a.Gc<T>() != null;
+    }
+
+    // color
+    public static Color UiCol(this GameObject a, Color col = default(Color)) {
+        if (a.Gc<Image>()) return a.Gc<Image>().color;
+        else if (a.Gc<Text>()) return a.Gc<Text>().color;
+        else if (a.Gc<TextMesh>()) return a.Gc<TextMesh>().color;
+        else if (a.Gc<TextMeshPro>()) return a.Gc<TextMeshPro>().color;
+        else return col;
+    }
+
+    // active
+    public static bool Enabled(this GameObject a) {
+        return a && a.activeSelf;
+    }
+
+    ///<summary>material-уудыг авна</summary>
+    public static List<Material> MatLis(this GameObject a) {
+        List<Renderer> renLis = a.Gca<Renderer>();
+        List<Material> matLis = new List<Material>();
+        for (int i = 0; i < renLis.Count; i++)
+            for (int j = 0; j < renLis[i].materials.Length; j++)
+                matLis.Add(renLis[i].materials[j]);
+        return matLis;
+    }
+
+    ///<summary>material-уудыг transparent болгож авна</summary>
+    public static List<Material> MatLisTransparent(this GameObject a) {
+        List<Material> matLis = a.MatLis();
+        matLis.ForEach(x => Mat.RenMode(x, RenderingMode.Transparent));
+        return matLis;
+    }
+
+    ///<summary>tag ижил байна уу шалгана</summary>
+    public static bool Tag(this GameObject a, string tag) {
+        return a.CompareTag(tag);
+    }
+
+};using UnityEngine;
+
+public static partial class ExtensionGameObject {
+
+	///<summary>rigidbody-г авна</summary>
+	public static Rigidbody Rb(this GameObject a) {
+		return a.Gc<Rigidbody>();
+	}
+
+	///<summary>constraints-г өөрчилнө</summary>
+	public static void RbConstraints(this GameObject a, bool isFrzPosX = false, bool isFrzPosY = false, bool isFrzPosZ = false, bool isFrzRotX = false, bool isFrzRotY = false, bool isFrzRotZ = false) {
+		a.Rb().Constraints(isFrzPosX, isFrzPosY, isFrzPosZ, isFrzRotX, isFrzRotY, isFrzRotZ);
+	}
+
+	///<summary>constraints-г хөлдөөнө</summary>
+	public static void RbFreezeAll(this GameObject a) {
+		a.Rb().FreezeAll();
+	}
+
+	///<summary>constraints-г байрлалыг хөлдөөнө</summary>
+	public static void RbFreezePos(this GameObject a) {
+		a.Rb().FreezePos();
+	}
+
+	///<summary>constraints-г эргэлтийг хөлдөөнө</summary>
+	public static void RbFreezeRot(this GameObject a) {
+		a.Rb().FreezeRot();
+	}
+
+	///<summary>constraints-г хөлдөөхгүй болгоно</summary>
+	public static void RbNone(this GameObject a) {
+		a.Rb().None();
+	}
+
+	///<summary>хурдыг 0 болгоно</summary>
+	public static void RbV0(this GameObject a) {
+		a.Rb().V0();
+	}
+
+	///<summary>татах хүч ашиглана</summary>
+	public static void RbUseG(this GameObject a, bool useGravity = true) {
+		a.Rb().UseG(useGravity);
+	}
+
+	///<summary>татах хүч ашиглахгүй</summary>
+	public static void RbNoG(this GameObject a) {
+		a.Rb().NoG();
+	}
+
+}using UnityEngine;
+
+public static partial class ExtensionGameObject {
+
+	// ############### TRANSFORM.POSITION ###############
+
+	///<summary>transform.position-г авна</summary>
+	public static Vector3 Tp(this GameObject a) {
+		return a.transform.position;
+	}
+
+	///<summary>transform.position-г өөрчилнө</summary>
+	public static void Tp(this GameObject a, Vector3 v) {
+		a.transform.position = v;
+	}
+
+	///<summary>transform.position-г өөрчилнө</summary>
+	public static void Tp(this GameObject a, float x, float y, float z) {
+		a.transform.position = new Vector3(x, y, z);
+	}
+
+	///<summary>transform.position-н x-г өөрчилнө</summary>
+	public static void TpX(this GameObject a, float x) {
+		a.transform.position = V3.X(a.transform.position, x);
+	}
+
+	///<summary>transform.position-н y-г өөрчилнө</summary>
+	public static void TpY(this GameObject a, float y) {
+		a.transform.position = V3.Y(a.transform.position, y);
+	}
+
+	///<summary>transform.position-н z-г өөрчилнө</summary>
+	public static void TpZ(this GameObject a, float z) {
+		a.transform.position = V3.Z(a.transform.position, z);
+	}
+
+	///<summary>transform.position-н x, y-г өөрчилнө</summary>
+	public static void TpXy(this GameObject a, float x, float y) {
+		a.transform.position = V3.Xy(a.transform.position, x, y);
+	}
+
+	///<summary>transform.position-н x, z-г өөрчилнө</summary>
+	public static void TpXz(this GameObject a, float x, float z) {
+		a.transform.position = V3.Xz(a.transform.position, x, z);
+	}
+
+	///<summary>transform.position-н y, z-г өөрчилнө</summary>
+	public static void TpYz(this GameObject a, float y, float z) {
+		a.transform.position = V3.Yz(a.transform.position, y, z);
+	}
+
+	///<summary>transform.position-д v-г нэмнэ</summary>
+	public static void TpD(this GameObject a, Vector3 v) {
+		a.transform.position += v;
+	}
+
+	///<summary>transform.position-д x, y, z-г нэмнэ</summary>
+	public static void TpD(this GameObject a, float x, float y, float z) {
+		a.transform.position += new Vector3(x, y, z);
+	}
+
+	///<summary>transform.position-д x-г нэмнэ</summary>
+	public static void TpDx(this GameObject a, float x) {
+		a.transform.position += new Vector3(x, 0, 0);
+	}
+
+	///<summary>transform.position-д y-г нэмнэ</summary>
+	public static void TpDy(this GameObject a, float y) {
+		a.transform.position += new Vector3(0, y, 0);
+	}
+
+	///<summary>transform.position-д z-г нэмнэ</summary>
+	public static void TpDz(this GameObject a, float z) {
+		a.transform.position += new Vector3(0, 0, z);
+	}
+
+	///<summary>transform.position-д x, y-г нэмнэ</summary>
+	public static void TpDxy(this GameObject a, float x, float y) {
+		a.transform.position += new Vector3(x, y, 0);
+	}
+
+	///<summary>transform.position-д x, z-г нэмнэ</summary>
+	public static void TpDxz(this GameObject a, float x, float z) {
+		a.transform.position += new Vector3(x, 0, z);
+	}
+
+	///<summary>transform.position-д y, z-г нэмнэ</summary>
+	public static void TpDyz(this GameObject a, float y, float z) {
+		a.transform.position += new Vector3(0, y, z);
+	}
+
+	// ############### TRANSFORM.LOCALPOSITION ###############
+
+	///<summary>transform.localPosition-г авна</summary>
+	public static Vector3 Tlp(this GameObject a) {
+		return a.transform.localPosition;
+	}
+
+	///<summary>transform.localPosition-г өөрчилнө</summary>
+	public static void Tlp(this GameObject a, Vector3 v) {
+		a.transform.localPosition = v;
+	}
+
+	///<summary>transform.localPosition-г өөрчилнө</summary>
+	public static void Tlp(this GameObject a, float x, float y, float z) {
+		a.transform.localPosition = new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localPosition-н x-г өөрчилнө</summary>
+	public static void TlpX(this GameObject a, float x) {
+		a.transform.localPosition = V3.X(a.transform.localPosition, x);
+	}
+
+	///<summary>transform.localPosition-н y-г өөрчилнө</summary>
+	public static void TlpY(this GameObject a, float y) {
+		a.transform.localPosition = V3.Y(a.transform.localPosition, y);
+	}
+
+	///<summary>transform.localPosition-н z-г өөрчилнө</summary>
+	public static void TlpZ(this GameObject a, float z) {
+		a.transform.localPosition = V3.Z(a.transform.localPosition, z);
+	}
+
+	///<summary>transform.localPosition-н x, y-г өөрчилнө</summary>
+	public static void TlpXy(this GameObject a, float x, float y) {
+		a.transform.localPosition = V3.Xy(a.transform.localPosition, x, y);
+	}
+
+	///<summary>transform.localPosition-н x, z-г өөрчилнө</summary>
+	public static void TlpXz(this GameObject a, float x, float z) {
+		a.transform.localPosition = V3.Xz(a.transform.localPosition, x, z);
+	}
+
+	///<summary>transform.localPosition-н y, z-г өөрчилнө</summary>
+	public static void TlpYz(this GameObject a, float y, float z) {
+		a.transform.localPosition = V3.Yz(a.transform.localPosition, y, z);
+	}
+
+	///<summary>transform.localPosition-д v-г нэмнэ</summary>
+	public static void TlpD(this GameObject a, Vector3 v) {
+		a.transform.localPosition += v;
+	}
+
+	///<summary>transform.localPosition-д x, y, z-г нэмнэ</summary>
+	public static void TlpD(this GameObject a, float x, float y, float z) {
+		a.transform.localPosition += new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localPosition-д x-г нэмнэ</summary>
+	public static void TlpDx(this GameObject a, float x) {
+		a.transform.localPosition += new Vector3(x, 0, 0);
+	}
+
+	///<summary>transform.localPosition-д y-г нэмнэ</summary>
+	public static void TlpDy(this GameObject a, float y) {
+		a.transform.localPosition += new Vector3(0, y, 0);
+	}
+
+	///<summary>transform.localPosition-д z-г нэмнэ</summary>
+	public static void TlpDz(this GameObject a, float z) {
+		a.transform.localPosition += new Vector3(0, 0, z);
+	}
+
+	///<summary>transform.localPosition-д x, y-г нэмнэ</summary>
+	public static void TlpDxy(this GameObject a, float x, float y) {
+		a.transform.localPosition += new Vector3(x, y, 0);
+	}
+
+	///<summary>transform.localPosition-д x, z-г нэмнэ</summary>
+	public static void TlpDxz(this GameObject a, float x, float z) {
+		a.transform.localPosition += new Vector3(x, 0, z);
+	}
+
+	///<summary>transform.localPosition-д y, z-г нэмнэ</summary>
+	public static void TlpDyz(this GameObject a, float y, float z) {
+		a.transform.localPosition += new Vector3(0, y, z);
+	}
+
+	// ############### TRANSFORM.ROTATION ###############
+
+	///<summary>transform.rotation-г авна</summary>
+	public static Quaternion Tr(this GameObject a) {
+		return a.transform.rotation;
+	}
+
+	///<summary>transform.rotation-г өөрчилнө</summary>
+	public static void Tr(this GameObject a, Quaternion v) {
+		a.transform.rotation = v;
+	}
+
+	// ############### TRANSFORM.LOCALROTATION ###############
+
+	///<summary>transform.localRotation-г авна</summary>
+	public static Quaternion Tlr(this GameObject a) {
+		return a.transform.localRotation;
+	}
+
+	///<summary>transform.localRotation-г өөрчилнө</summary>
+	public static void Tlr(this GameObject a, Quaternion v) {
+		a.transform.localRotation = v;
+	}
+
+	// ############### TRANSFORM.LOSSYSCALE ###############
+
+	///<summary>transform.lossyScale-г авна</summary>
+	public static Vector3 Ts(this GameObject a) {
+		return a.transform.lossyScale;
+	}
+
+	// ############### TRANSFORM.LOCALSCALE ###############
+
+	///<summary>transform.localScale-г авна</summary>
+	public static Vector3 Tls(this GameObject a) {
+		return a.transform.localScale;
+	}
+
+	///<summary>transform.localScale-г өөрчилнө</summary>
+	public static void Tls(this GameObject a, Vector3 v) {
+		a.transform.localScale = v;
+	}
+
+	///<summary>transform.localScale-г өөрчилнө</summary>
+	public static void Tls(this GameObject a, float x, float y, float z) {
+		a.transform.localScale = new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localScale-н x-г өөрчилнө</summary>
+	public static void TlsX(this GameObject a, float x) {
+		a.transform.localScale = V3.X(a.transform.localScale, x);
+	}
+
+	///<summary>transform.localScale-н y-г өөрчилнө</summary>
+	public static void TlsY(this GameObject a, float y) {
+		a.transform.localScale = V3.Y(a.transform.localScale, y);
+	}
+
+	///<summary>transform.localScale-н z-г өөрчилнө</summary>
+	public static void TlsZ(this GameObject a, float z) {
+		a.transform.localScale = V3.Z(a.transform.localScale, z);
+	}
+
+	///<summary>transform.localScale-н x, y-г өөрчилнө</summary>
+	public static void TlsXy(this GameObject a, float x, float y) {
+		a.transform.localScale = V3.Xy(a.transform.localScale, x, y);
+	}
+
+	///<summary>transform.localScale-н x, z-г өөрчилнө</summary>
+	public static void TlsXz(this GameObject a, float x, float z) {
+		a.transform.localScale = V3.Xz(a.transform.localScale, x, z);
+	}
+
+	///<summary>transform.localScale-н y, z-г өөрчилнө</summary>
+	public static void TlsYz(this GameObject a, float y, float z) {
+		a.transform.localScale = V3.Yz(a.transform.localScale, y, z);
+	}
+
+	///<summary>transform.localScale-д v-г нэмнэ</summary>
+	public static void TlsD(this GameObject a, Vector3 v) {
+		a.transform.localScale += v;
+	}
+
+	///<summary>transform.localScale-д x, y, z-г нэмнэ</summary>
+	public static void TlsD(this GameObject a, float x, float y, float z) {
+		a.transform.localScale += new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localScale-д x-г нэмнэ</summary>
+	public static void TlsDx(this GameObject a, float x) {
+		a.transform.localScale += new Vector3(x, 0, 0);
+	}
+
+	///<summary>transform.localScale-д y-г нэмнэ</summary>
+	public static void TlsDy(this GameObject a, float y) {
+		a.transform.localScale += new Vector3(0, y, 0);
+	}
+
+	///<summary>transform.localScale-д z-г нэмнэ</summary>
+	public static void TlsDz(this GameObject a, float z) {
+		a.transform.localScale += new Vector3(0, 0, z);
+	}
+
+	///<summary>transform.localScale-д x, y-г нэмнэ</summary>
+	public static void TlsDxy(this GameObject a, float x, float y) {
+		a.transform.localScale += new Vector3(x, y, 0);
+	}
+
+	///<summary>transform.localScale-д x, z-г нэмнэ</summary>
+	public static void TlsDxz(this GameObject a, float x, float z) {
+		a.transform.localScale += new Vector3(x, 0, z);
+	}
+
+	///<summary>transform.localScale-д y, z-г нэмнэ</summary>
+	public static void TlsDyz(this GameObject a, float y, float z) {
+		a.transform.localScale += new Vector3(0, y, z);
+	}
+
+	// ############### TRANSFORM.EULERANGLES ###############
+
+	///<summary>transform.eulerAngles-г авна</summary>
+	public static Vector3 Te(this GameObject a) {
+		return a.transform.eulerAngles;
+	}
+
+	///<summary>transform.eulerAngles-г өөрчилнө</summary>
+	public static void Te(this GameObject a, Vector3 v) {
+		a.transform.eulerAngles = v;
+	}
+
+	///<summary>transform.eulerAngles-г өөрчилнө</summary>
+	public static void Te(this GameObject a, float x, float y, float z) {
+		a.transform.eulerAngles = new Vector3(x, y, z);
+	}
+
+	///<summary>transform.eulerAngles-н x-г өөрчилнө</summary>
+	public static void TeX(this GameObject a, float x) {
+		a.transform.eulerAngles = V3.X(a.transform.eulerAngles, x);
+	}
+
+	///<summary>transform.eulerAngles-н y-г өөрчилнө</summary>
+	public static void TeY(this GameObject a, float y) {
+		a.transform.eulerAngles = V3.Y(a.transform.eulerAngles, y);
+	}
+
+	///<summary>transform.eulerAngles-н z-г өөрчилнө</summary>
+	public static void TeZ(this GameObject a, float z) {
+		a.transform.eulerAngles = V3.Z(a.transform.eulerAngles, z);
+	}
+
+	///<summary>transform.eulerAngles-н x, y-г өөрчилнө</summary>
+	public static void TeXy(this GameObject a, float x, float y) {
+		a.transform.eulerAngles = V3.Xy(a.transform.eulerAngles, x, y);
+	}
+
+	///<summary>transform.eulerAngles-н x, z-г өөрчилнө</summary>
+	public static void TeXz(this GameObject a, float x, float z) {
+		a.transform.eulerAngles = V3.Xz(a.transform.eulerAngles, x, z);
+	}
+
+	///<summary>transform.eulerAngles-н y, z-г өөрчилнө</summary>
+	public static void TeYz(this GameObject a, float y, float z) {
+		a.transform.eulerAngles = V3.Yz(a.transform.eulerAngles, y, z);
+	}
+
+	///<summary>transform.eulerAngles-д v-г нэмнэ</summary>
+	public static void TeD(this GameObject a, Vector3 v) {
+		a.transform.eulerAngles += v;
+	}
+
+	///<summary>transform.eulerAngles-д x, y, z-г нэмнэ</summary>
+	public static void TeD(this GameObject a, float x, float y, float z) {
+		a.transform.eulerAngles += new Vector3(x, y, z);
+	}
+
+	///<summary>transform.eulerAngles-д x-г нэмнэ</summary>
+	public static void TeDx(this GameObject a, float x) {
+		a.transform.eulerAngles += new Vector3(x, 0, 0);
+	}
+
+	///<summary>transform.eulerAngles-д y-г нэмнэ</summary>
+	public static void TeDy(this GameObject a, float y) {
+		a.transform.eulerAngles += new Vector3(0, y, 0);
+	}
+
+	///<summary>transform.eulerAngles-д z-г нэмнэ</summary>
+	public static void TeDz(this GameObject a, float z) {
+		a.transform.eulerAngles += new Vector3(0, 0, z);
+	}
+
+	///<summary>transform.eulerAngles-д x, y-г нэмнэ</summary>
+	public static void TeDxy(this GameObject a, float x, float y) {
+		a.transform.eulerAngles += new Vector3(x, y, 0);
+	}
+
+	///<summary>transform.eulerAngles-д x, z-г нэмнэ</summary>
+	public static void TeDxz(this GameObject a, float x, float z) {
+		a.transform.eulerAngles += new Vector3(x, 0, z);
+	}
+
+	///<summary>transform.eulerAngles-д y, z-г нэмнэ</summary>
+	public static void TeDyz(this GameObject a, float y, float z) {
+		a.transform.eulerAngles += new Vector3(0, y, z);
+	}
+
+	// ############### TRANSFORM.LOCALEULERANGLES ###############
+
+	///<summary>transform.localEulerAngles-г авна</summary>
+	public static Vector3 Tle(this GameObject a) {
+		return a.transform.localEulerAngles;
+	}
+
+	///<summary>transform.localEulerAngles-г өөрчилнө</summary>
+	public static void Tle(this GameObject a, Vector3 v) {
+		a.transform.localEulerAngles = v;
+	}
+
+	///<summary>transform.localEulerAngles-г өөрчилнө</summary>
+	public static void Tle(this GameObject a, float x, float y, float z) {
+		a.transform.localEulerAngles = new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localEulerAngles-н x-г өөрчилнө</summary>
+	public static void TleX(this GameObject a, float x) {
+		a.transform.localEulerAngles = V3.X(a.transform.localEulerAngles, x);
+	}
+
+	///<summary>transform.localEulerAngles-н y-г өөрчилнө</summary>
+	public static void TleY(this GameObject a, float y) {
+		a.transform.localEulerAngles = V3.Y(a.transform.localEulerAngles, y);
+	}
+
+	///<summary>transform.localEulerAngles-н z-г өөрчилнө</summary>
+	public static void TleZ(this GameObject a, float z) {
+		a.transform.localEulerAngles = V3.Z(a.transform.localEulerAngles, z);
+	}
+
+	///<summary>transform.localEulerAngles-н x, y-г өөрчилнө</summary>
+	public static void TleXy(this GameObject a, float x, float y) {
+		a.transform.localEulerAngles = V3.Xy(a.transform.localEulerAngles, x, y);
+	}
+
+	///<summary>transform.localEulerAngles-н x, z-г өөрчилнө</summary>
+	public static void TleXz(this GameObject a, float x, float z) {
+		a.transform.localEulerAngles = V3.Xz(a.transform.localEulerAngles, x, z);
+	}
+
+	///<summary>transform.localEulerAngles-н y, z-г өөрчилнө</summary>
+	public static void TleYz(this GameObject a, float y, float z) {
+		a.transform.localEulerAngles = V3.Yz(a.transform.localEulerAngles, y, z);
+	}
+
+	///<summary>transform.localEulerAngles-д v-г нэмнэ</summary>
+	public static void TleD(this GameObject a, Vector3 v) {
+		a.transform.localEulerAngles += v;
+	}
+
+	///<summary>transform.localEulerAngles-д x, y, z-г нэмнэ</summary>
+	public static void TleD(this GameObject a, float x, float y, float z) {
+		a.transform.localEulerAngles += new Vector3(x, y, z);
+	}
+
+	///<summary>transform.localEulerAngles-д x-г нэмнэ</summary>
+	public static void TleDx(this GameObject a, float x) {
+		a.transform.localEulerAngles += new Vector3(x, 0, 0);
+	}
+
+	///<summary>transform.localEulerAngles-д y-г нэмнэ</summary>
+	public static void TleDy(this GameObject a, float y) {
+		a.transform.localEulerAngles += new Vector3(0, y, 0);
+	}
+
+	///<summary>transform.localEulerAngles-д z-г нэмнэ</summary>
+	public static void TleDz(this GameObject a, float z) {
+		a.transform.localEulerAngles += new Vector3(0, 0, z);
+	}
+
+	///<summary>transform.localEulerAngles-д x, y-г нэмнэ</summary>
+	public static void TleDxy(this GameObject a, float x, float y) {
+		a.transform.localEulerAngles += new Vector3(x, y, 0);
+	}
+
+	///<summary>transform.localEulerAngles-д x, z-г нэмнэ</summary>
+	public static void TleDxz(this GameObject a, float x, float z) {
+		a.transform.localEulerAngles += new Vector3(x, 0, z);
+	}
+
+	///<summary>transform.localEulerAngles-д y, z-г нэмнэ</summary>
+	public static void TleDyz(this GameObject a, float y, float z) {
+		a.transform.localEulerAngles += new Vector3(0, y, z);
+	}
+
+}
