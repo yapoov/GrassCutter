@@ -101,6 +101,9 @@ float3 _OrthographicCamPos;
 float _OrthographicCamSize;
 
 
+sampler2D _CutMap;
+
+
 
 // ----------------------------------------
 
@@ -184,13 +187,20 @@ void Main(uint3 id : SV_DispatchThreadID)
     float3 wind1 = float3(
     sin(_Time.x * _WindSpeed + v0.x) + sin(
     _Time.x * _WindSpeed + v0.z * 2) + sin(
-    _Time.x * _WindSpeed * 0.1 + v0.x), 0,
+    _Time.x * _WindSpeed * 0.1 + v0.x), 0, 
     cos(_Time.x * _WindSpeed + v0.x * 2) + cos(
     _Time.x * _WindSpeed + v0.z));
 
     wind1 *= _WindStrength;
     
     float3 combinedDisp = 0;
+
+    float grassVisibilty = tex2Dlod(_CutMap, float4(sv.uv, 0,0)).r;    
+
+    if(grassVisibilty>0.8) {
+
+    
+
    // Interactivity
     for (int i = 0; i <_InteractorsLength; i++)
     {
@@ -205,11 +215,12 @@ void Main(uint3 id : SV_DispatchThreadID)
     float3 dis = distance(_PositionsMoving[i].xyz, worldPos);
     float3 radius = 1 - saturate(dis / _InteractorRadius);
     sphereDisp *= radius ;
-
     combinedDisp += sphereDisp;// combine
     }
+
+
    
-    
+    float3 cutDisplacement = float3(0,_Time.x,0);
     
 
     // Set vertex color
@@ -233,7 +244,9 @@ void Main(uint3 id : SV_DispatchThreadID)
         randomisedPos * TWO_PI +j, float3(0, 1, -0.1));
         float3x3 transformationMatrix = facingRotationMatrix;
         float bladeRadius = j/(float) numBladesPerVertex;
-        float offset = (1 - bladeRadius) * _BladeRadius;
+        float offset =  (1 - bladeRadius) * _BladeRadius;
+
+        
 
         for (int i = 0; i < numSegmentsPerBlade; ++i)
         {
@@ -252,6 +265,13 @@ void Main(uint3 id : SV_DispatchThreadID)
 
             // First grass (0) segment does not get displaced by interactor
             float3 newPos = (i == 0) ? v0 : v0 + (combinedDisp * t) + wind1 * t;
+            // if(isCut){
+            //     newPos = v0 -cutDisplacement;
+            //     // segmentHeight=0;
+            //     // segmentWidth=0;
+            // }else{
+
+            // }   
             
             // Append First Vertex
             drawVertices[i * 2] = GrassVertex(newPos, segmentWidth, segmentHeight, offset, segmentForward, float2(0, t), transformMatrix, color);
@@ -274,7 +294,7 @@ void Main(uint3 id : SV_DispatchThreadID)
         }
         
     }  // For loop - Blade
-    
+    }
     // InterlockedAdd(a, b) adds b to a and stores the value in a. It is thread-safe
     // This call counts the number of vertices, storing it in the indirect arguments
     // This tells the renderer how many vertices are in the mesh in DrawProcedural

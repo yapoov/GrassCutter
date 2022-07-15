@@ -53,7 +53,7 @@ public class GrassComputeScript : MonoBehaviour
     [Header("Other")]
     public UnityEngine.Rendering.ShadowCastingMode castShadow;
 
-
+    public Texture2D cutMap;
     ShaderInteractor[] interactors;
 
     private Camera m_MainCamera;
@@ -232,6 +232,8 @@ public class GrassComputeScript : MonoBehaviour
         m_InstantiatedComputeShader.SetInt("_MaxSegmentsPerBlade", maxSegmentsPerBlade);
 
         m_InstantiatedMaterial.SetBuffer("_DrawTriangles", m_DrawBuffer);
+
+        m_InstantiatedComputeShader.SetTexture(m_IdGrassKernel, Shader.PropertyToID("_CutMap"), cutMap);
 
 
 

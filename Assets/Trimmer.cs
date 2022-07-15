@@ -10,8 +10,7 @@ public class Trimmer : MonoBehaviour
     public Transform extension;
 
 
-    public GameObject maskPf;
-    public Transform particleTf;
+
     private GameObject _currentMask;
     // Start is called before the first frame update
     void Start()
@@ -26,16 +25,6 @@ public class Trimmer : MonoBehaviour
 
         fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * Time.deltaTime) * fan.rotation;
 
-        if (_currentMask == null)
-        {
-            _currentMask = Instantiate(maskPf, fan.position, Quaternion.Euler(90, 0, 0));
-        }
-
-        particleTf.position = fan.position;
-
-        if (Vector3.Distance(_currentMask.transform.position, fan.transform.position) < 0.5f) return;
-
-        _currentMask = Instantiate(maskPf, fan.position, Quaternion.Euler(90, 0, 0));
 
     }
 
