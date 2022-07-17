@@ -9,9 +9,14 @@ public class Trimmer : MonoBehaviour
     public Transform rod;
     public Transform extension;
 
+    public ParticleSystem grassParticles;
 
-
+    public ParticleSystem grassCutMasPS;
     private GameObject _currentMask;
+
+    private bool[,] visited = new bool[100, 100];
+
+    public Transform gridOrigin;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +31,16 @@ public class Trimmer : MonoBehaviour
         fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * Time.deltaTime) * fan.rotation;
 
 
+
+        grassParticles.transform.position = fan.transform.position;
+        grassCutMasPS.transform.position = fan.transform.position;
+
+        if (!visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)])
+        {
+            grassParticles.Play();
+            grassCutMasPS.Play();
+            visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)] = true;
+        }
     }
 
 
@@ -35,7 +50,7 @@ public class Trimmer : MonoBehaviour
         var fanOffset = rod.position - fan.position;
         var targetLoc = rod.localPosition;
         float sign = Mathf.Sign(rod.InverseTransformPoint(position).y);
-        targetLoc.y = sign * rod.InverseTransformPoint(position).magnitude;
+        targetLoc.y = sign * rod.InverseTransformPoint(position).magnitude * 2f;
 
         rod.localPosition = Vector3.Lerp(rod.localPosition, targetLoc, Time.deltaTime * 10);
 

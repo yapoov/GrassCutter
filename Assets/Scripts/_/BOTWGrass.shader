@@ -338,7 +338,7 @@ Shader "Custom/BotWGrass"
 
 					triStream.RestartStrip();
 				}
-                else
+                else if (grassVisibility>0.01)
                 {
 
                     float3 pos = input[0].vertex.xyz;
@@ -378,26 +378,27 @@ Shader "Custom/BotWGrass"
 					float forward = rand(pos.yyz) * _BladeBendDistance;
 
 					// Create blade segments by adding two vertices at once.
-
-                    pos+= float3(0,-50,0)*_SinTime.y*_SinTime.y + windAxis; 
+					float progress = (1-grassVisibility);
+					pos = mul(windMatrix,pos);
+                    pos= lerp(pos,pos + float3(sin(_Time.y*progress*0.1) ,lerp(-1,-5,progress),0) ,progress);
 
 					for (int i = 0; i <BLADE_SEGMENTS ; ++i)
 					{
 						float t = i / BLADE_SEGMENTS;
 
-                        float targetWidth = lerp(width * (1 - t) ,0.001,_Time.y);
-                        float targetHeight = lerp(height * t ,0.001,_Time.y);
-                        float targetF = lerp(forward,0.001,_Time.x*10);
+                        float targetWidth = lerp(width * (1 - t) ,0.000,progress)*grassVisibility;
+                        float targetHeight = lerp(height * t ,0.000,progress)*grassVisibility;
+                        float targetF = lerp(forward,0.001,progress);
 						float3 offset = float3(targetWidth, targetF, targetHeight);
 
-						float3x3 transformationMatrix = (i == 0) ? baseTransformationMatrix : tipTransformationMatrix;
+						float3x3 transformationMatrix =i==0?baseTransformationMatrix: tipTransformationMatrix;
 
 						triStream.Append(TransformGeomToClip(pos, float3( offset.x, offset.y, offset.z), transformationMatrix, float2(0, t)));
 						triStream.Append(TransformGeomToClip(pos, float3(-offset.x, offset.y, offset.z), transformationMatrix, float2(1, t)));
 					}
 
 					// Add the final vertex at the tip of the grass blade.
-					// triStream.Append(TransformGeomToClip(pos, float3(0, forward, height), tipTransformationMatrix, float2(0.5, 1)));
+					triStream.Append(TransformGeomToClip(pos, float3(0, forward, height), tipTransformationMatrix, float2(0.5, 1)));
 
 					triStream.RestartStrip();
 

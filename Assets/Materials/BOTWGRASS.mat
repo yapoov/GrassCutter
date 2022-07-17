@@ -135,7 +135,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Surface: 0
-    - _TessellationGrassDistance: 0.132
+    - _TessellationGrassDistance: 0.082
     - _WindFrequency: 0.01
     - _WorkflowMode: 1
     - _ZWrite: 1
