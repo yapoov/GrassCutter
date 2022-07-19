@@ -26,6 +26,9 @@ Shader "Custom/BotWGrass"
 		_WindMap("Wind Offset Map", 2D) = "bump" {}
 		_WindVelocity("Wind Velocity", Vector) = (1, 0, 0, 0)
 		_WindFrequency("Wind Pulse Frequency", Range(0, 1)) = 0.01
+
+
+		// _IsFullyCut("Is Fully Cut",bool) = false
 	}
 
 	SubShader
