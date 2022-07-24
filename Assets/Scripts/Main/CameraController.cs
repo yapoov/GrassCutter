@@ -40,6 +40,7 @@ public class CameraController : Singleton<CameraController>
                 var target = offset + deltaOffset + followTf.position;
                 if (lockToHorizontalAxis)
                     target.y = transform.position.y;
+                target.x = Mathf.Clamp(target.x, -10, Mathf.Infinity);
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
                     target,
