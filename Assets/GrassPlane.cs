@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GrassPlane : MonoBehaviour
 {
-
+    private float hardness;
     bool cutDown;
     public Camera orthoCamera;
     RenderTexture texture;
@@ -20,6 +20,12 @@ public class GrassPlane : MonoBehaviour
         orthoCamera.orthographicSize = Mathf.Max(GetComponent<MeshRenderer>().bounds.size.x, GetComponent<MeshRenderer>().bounds.size.y) / 2;
     }
 
+
+    public void SetData(GrassPlaneData planeData)
+    {
+        GetComponent<Renderer>().material.SetColor("_TipColor", planeData.color);
+        this.hardness = planeData.hardness;
+    }
 
     void CheckIfBlack(RenderTexture texture)
     {
@@ -40,4 +46,12 @@ public class GrassPlane : MonoBehaviour
     {
 
     }
+}
+
+
+public struct GrassPlaneData
+{
+    public Color color;
+    public float hardness;
+
 }

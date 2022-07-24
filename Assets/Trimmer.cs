@@ -10,8 +10,6 @@ public class Trimmer : MonoBehaviour
     public Transform rod;
     public Transform extension;
 
-    public ParticleSystem grassParticles;
-
     public ParticleSystem grassCutMasPS;
     private GameObject _currentMask;
 
@@ -32,9 +30,6 @@ public class Trimmer : MonoBehaviour
 
         fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * Time.deltaTime) * fan.rotation;
 
-
-
-        grassParticles.transform.position = fan.transform.position;
         grassCutMasPS.transform.position = fan.transform.position;
 
         // if (!visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)])
@@ -48,16 +43,15 @@ public class Trimmer : MonoBehaviour
 
     public void MoveAt(Vector3 position)
     {
-
         // fan.position = position;
         transform.rotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
+        // fan.position = position;
+        // rod.up = fan.position -
         position.z = rod.position.z;
         var targetPos = position + rod.up * 2.189f;
-
         Vector3 dir = (targetPos - rod.position);
         if (dir.magnitude > 1)
             dir = dir.normalized;
-
         rod.position += dir * Time.deltaTime * moveSpeed;
         // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-Vector3.forward, transform.position - position), Time.deltaTime * 5);
         // var fanOffset = rod.position - fan.position;
