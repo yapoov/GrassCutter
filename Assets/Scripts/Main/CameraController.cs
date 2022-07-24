@@ -7,6 +7,10 @@ public class CameraController : Singleton<CameraController>
 {
     public static bool IsZoom = false;
     public Transform followTf;
+    [Header("Controls")]
+    public bool lockToHorizontalAxis;
+
+
     [Header("Smooth")]
     public bool isSmooth = false;
     public float smoothSpeed = 5;
@@ -19,6 +23,8 @@ public class CameraController : Singleton<CameraController>
     public float zoomMagnitude = 10;
     Vector3 offset, deltaOffset;
     private Vector3 currentVelocity;
+
+
     void Start()
     {
         IsZoom = false;
@@ -31,9 +37,12 @@ public class CameraController : Singleton<CameraController>
         {
             if (isSmooth)
             {
+                var target = offset + deltaOffset + followTf.position;
+                if (lockToHorizontalAxis)
+                    target.y = transform.position.y;
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
-                    offset + deltaOffset + followTf.position,
+                    target,
                     ref currentVelocity,
                     smoothTime
                 );

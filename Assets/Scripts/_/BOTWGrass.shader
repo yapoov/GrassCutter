@@ -43,7 +43,7 @@ Shader "Custom/BotWGrass"
 		Cull Off
 
 		HLSLINCLUDE
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl" 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
@@ -82,6 +82,7 @@ Shader "Custom/BotWGrass"
 				float  _WindFrequency;
 
 				float4 _ShadowColor;
+				
 			CBUFFER_END
 
 			struct VertexInput
