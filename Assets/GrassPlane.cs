@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class GrassPlane : MonoBehaviour
 {
-    private float hardness;
+
+    public float hardness;
     bool cutDown;
     public Camera orthoCamera;
     RenderTexture texture;

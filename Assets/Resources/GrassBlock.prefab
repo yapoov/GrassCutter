@@ -4875,7 +4875,7 @@ GameObject:
   - component: {fileID: 2309583254180074631}
   - component: {fileID: 2309583254180074630}
   - component: {fileID: 2309583254180074650}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4974,6 +4974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8f69c65c62bd054ab14d20ca14999fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hardness: 0
   orthoCamera: {fileID: 2309583254944368401}
 --- !u!1 &2309583254221134266
 GameObject:

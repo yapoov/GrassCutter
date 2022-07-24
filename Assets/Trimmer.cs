@@ -4,19 +4,21 @@ using UnityEngine;
 
 public class Trimmer : MonoBehaviour
 {
+    [Header("Trimmer Stats")]
     public float moveSpeed;
     public float rotSpeed;
+    public float sharpness;
+    [Header("Parts")]
     public Transform fan;
     public Transform rod;
     public Transform extension;
-
+    [Header("ParticleSystem")]
     public ParticleSystem grassCutMasPS;
-    private GameObject _currentMask;
 
-    private bool[,] visited = new bool[100, 100];
-
-    public Transform gridOrigin;
-
+    float maxSlowness = 2f;
+    // private bool[,] visited = new bool[100, 100];
+    float slowness;
+    float slowRate = 1f;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,9 +30,22 @@ public class Trimmer : MonoBehaviour
     {
         if (!A.IsPlaying) return;
 
-        fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * Time.deltaTime) * fan.rotation;
+        fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * (1 - slowRate * 0.9f) * Time.deltaTime) * fan.rotation;
 
         grassCutMasPS.transform.position = fan.transform.position;
+
+
+        float hardness = 0;
+        RaycastHit hit;
+        if (Physics.Raycast(fan.position, Vector3.forward, out hit, 10, 1 << 4))
+        {
+            hardness = hit.collider.Gc<GrassPlane>().hardness;
+        }
+        var mainStartColor = grassCutMasPS.startColor;
+        mainStartColor.a = 1 - slowRate;
+        grassCutMasPS.startColor = mainStartColor;
+        slowRate = Mathf.Lerp(slowRate, Mathf.Clamp01(Mathf.Clamp(hardness - sharpness, 0, Mathf.Infinity) / maxSlowness), Time.deltaTime * 5);
+
 
         // if (!visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)])
         // {
@@ -44,7 +59,9 @@ public class Trimmer : MonoBehaviour
     public void MoveAt(Vector3 position)
     {
         // fan.position = position;
-        transform.rotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
+        var targetRotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1 - Mathf.Pow(slowRate, Time.deltaTime));
         // fan.position = position;
         // rod.up = fan.position -
         position.z = rod.position.z;
@@ -52,7 +69,15 @@ public class Trimmer : MonoBehaviour
         Vector3 dir = (targetPos - rod.position);
         if (dir.magnitude > 1)
             dir = dir.normalized;
-        rod.position += dir * Time.deltaTime * moveSpeed;
+
+
+
+
+        var displacement = dir * Time.deltaTime * moveSpeed;
+        displacement -= displacement * slowRate * 0.9f;
+        rod.position += displacement;
+
+
         // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-Vector3.forward, transform.position - position), Time.deltaTime * 5);
         // var fanOffset = rod.position - fan.position;
         // var targetLoc = rod.localPosition;
