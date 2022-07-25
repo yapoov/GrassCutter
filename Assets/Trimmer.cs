@@ -19,6 +19,12 @@ public class Trimmer : MonoBehaviour
     // private bool[,] visited = new bool[100, 100];
     float slowness;
     float slowRate = 1f;
+    bool isInsideShop = false;
+
+
+    public RectTransform coinImageRect;
+
+    private int currentTrimmerIdx;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,29 +36,43 @@ public class Trimmer : MonoBehaviour
     {
         if (!A.IsPlaying) return;
 
-        fan.rotation = Quaternion.Euler(0, 0, -rotSpeed * (1 - slowRate * 0.9f) * Time.deltaTime) * fan.rotation;
 
         grassCutMasPS.transform.position = fan.transform.position;
 
 
         float hardness = 0;
         RaycastHit hit;
+        float targetRot = -rotSpeed * (1 - slowRate * 0.9f) * Time.deltaTime;
+
         if (Physics.Raycast(fan.position, Vector3.forward, out hit, 10, 1 << 4))
         {
+
             hardness = hit.collider.Gc<GrassPlane>().hardness;
         }
+
+        if (isInsideShop)
+        {
+            targetRot = -1;
+        }
+
+
+
+        fan.rotation = Quaternion.Euler(0, 0, targetRot) * fan.rotation;
+
         var mainStartColor = grassCutMasPS.startColor;
         mainStartColor.a = 1 - slowRate;
         grassCutMasPS.startColor = mainStartColor;
         slowRate = Mathf.Lerp(slowRate, Mathf.Clamp01(Mathf.Clamp(hardness - sharpness, 0, Mathf.Infinity) / maxSlowness), Time.deltaTime * 5);
+    }
 
 
-        // if (!visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)])
-        // {
-        //     grassParticles.Play();
-        //     grassCutMasPS.Play();
-        //     visited[Mathf.RoundToInt(fan.position.x - gridOrigin.position.x), Mathf.RoundToInt(fan.position.y - gridOrigin.position.y)] = true;
-        // }
+    public void UpgradeTrimmer()
+    {
+        fan.Child(currentTrimmerIdx).gameObject.SetActive(false);
+        currentTrimmerIdx += 1;
+        if (currentTrimmerIdx < fan.childCount)
+            fan.Child(currentTrimmerIdx).gameObject.SetActive(true);
+        sharpness += 1;
     }
 
 
@@ -70,14 +90,9 @@ public class Trimmer : MonoBehaviour
         if (dir.magnitude > 1)
             dir = dir.normalized;
 
-
-
-
         var displacement = dir * Time.deltaTime * moveSpeed;
         displacement -= displacement * slowRate * 0.9f;
-        rod.position += displacement;
-
-
+        rod.localPosition += new Vector3(0, rod.InverseTransformDirection(displacement).y, 0);
         // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-Vector3.forward, transform.position - position), Time.deltaTime * 5);
         // var fanOffset = rod.position - fan.position;
         // var targetLoc = rod.localPosition;
@@ -95,5 +110,67 @@ public class Trimmer : MonoBehaviour
     public Vector3 GetFanPos()
     {
         return fan.position;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Shop"))
+        {
+            var shop = other.GetComponentInParent<UpgradeShop>();
+            isInsideShop = true;
+
+            //refrite system;
+            StartCoroutine(cor());
+            IEnumerator cor()
+            {
+                while (isInsideShop && Data.Coin.I() > 1)
+                {
+                    yield return A.Wfs025;
+                    Data.Coin.Set(Data.Coin.I() - 1);
+                    A.CC.HudCoin(Data.Coin.I());
+                    shop.SetPrice(shop.currentPrice - 1);
+
+                    if (shop.currentPrice == 0)
+                    {
+                        UpgradeTrimmer();
+                        shop.currentPrice = 10;
+                    }
+                }
+            }
+        }
+
+        if (other.CompareTag("Coin"))
+        {
+            other.GetComponent<Collider>().enabled = false;
+            Canvas canvas = other.GetComponentInChildren<Canvas>();
+            StartCoroutine(cor());
+            IEnumerator cor()
+            {
+                yield return new WaitForSeconds(0.9f);
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                float duration = 1f;
+                Transform rect = canvas.transform.Child(0);
+                Vector2 start = rect.transform.position;
+                Vector2 target = coinImageRect.transform.position;
+                rect.transform.position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+                rect.localScale = Vector3.one * 0.5f;
+                for (float t = 0; t < duration; t += Time.deltaTime)
+                {
+                    rect.transform.position = Vector2.Lerp(start, target, AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(t / duration));
+                    yield return null;
+                }
+
+                Data.Coin.Set(Data.Coin.I() + 1);
+                // print(Data.Coin.I)
+                A.CC.HudCoin(Data.Coin.I());
+                Destroy(other.gameObject);
+            }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Shop"))
+        {
+            isInsideShop = false;
+        }
     }
 }
