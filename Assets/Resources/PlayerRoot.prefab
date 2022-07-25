@@ -953,12 +953,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 0
   rotSpeed: -3000
+  sharpness: 0
   fan: {fileID: 4759724583553029382}
   rod: {fileID: 3344020123292258966}
   extension: {fileID: 2761208236306131544}
-  grassParticles: {fileID: 0}
   grassCutMasPS: {fileID: 0}
-  gridOrigin: {fileID: 0}
 --- !u!1 &3107301193070431149
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,7 +1308,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 916c463ab0215794797a181cb49ad12e, type: 2}
+  - {fileID: 2100000, guid: 60ca7ececeadc1449b4a8c2303bb190e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
