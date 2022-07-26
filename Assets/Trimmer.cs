@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 public class Trimmer : MonoBehaviour
 {
     [Header("Trimmer Stats")]
@@ -15,19 +15,24 @@ public class Trimmer : MonoBehaviour
     [Header("ParticleSystem")]
     public ParticleSystem grassCutMasPS;
 
-    float maxSlowness = 2f;
+    float maxSlowness = 10f;
     // private bool[,] visited = new bool[100, 100];
     float slowness;
     float slowRate = 1f;
-    bool isInsideShop = false;
+    [HideInInspector]
+    public bool isInsideShop = false;
 
 
-    public RectTransform coinImageRect;
+    public Transform coinSpawn;
 
     private int currentTrimmerIdx;
+
+    public event System.Action<Trimmer> onEnterShop;
+    public event System.Action<Trimmer> onExitShop;
     // Start is called before the first frame update
     void Start()
     {
+        SetTrimmer(Data.PlayerSkinIdx.I());
 
     }
 
@@ -68,11 +73,21 @@ public class Trimmer : MonoBehaviour
 
     public void UpgradeTrimmer()
     {
-        fan.Child(currentTrimmerIdx).gameObject.SetActive(false);
-        currentTrimmerIdx += 1;
-        if (currentTrimmerIdx < fan.childCount)
-            fan.Child(currentTrimmerIdx).gameObject.SetActive(true);
+        Data.PlayerSkinIdx.Set(Data.PlayerSkinIdx.I() + 1);
+        SetTrimmer(Data.PlayerSkinIdx.I());
         sharpness += 1;
+
+    }
+
+    void SetTrimmer(int idx)
+    {
+        for (int i = 0; i < fan.childCount; i++)
+        {
+            if (i == idx)
+                fan.Child(i).gameObject.SetActive(true);
+            else
+                fan.Child(i).gameObject.SetActive(false);
+        }
     }
 
 
@@ -93,13 +108,6 @@ public class Trimmer : MonoBehaviour
         var displacement = dir * Time.deltaTime * moveSpeed;
         displacement -= displacement * slowRate * 0.9f;
         rod.localPosition += new Vector3(0, rod.InverseTransformDirection(displacement).y, 0);
-        // transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(-Vector3.forward, transform.position - position), Time.deltaTime * 5);
-        // var fanOffset = rod.position - fan.position;
-        // var targetLoc = rod.localPosition;
-        // float sign = Mathf.Sign(rod.InverseTransformPoint(position).y);
-        // targetLoc.y = sign * rod.InverseTransformPoint(position).magnitude * 2f;
-
-        // rod.localPosition = Vector3.Lerp(rod.localPosition, targetLoc, Time.deltaTime * 10);
 
         var targetScale = extension.localScale;
         targetScale.y = Mathf.Clamp((extension.localPosition - rod.localPosition).y * 5, 0, Mathf.Infinity);
@@ -117,53 +125,27 @@ public class Trimmer : MonoBehaviour
         {
             var shop = other.GetComponentInParent<UpgradeShop>();
             isInsideShop = true;
-
-            //refrite system;
-            StartCoroutine(cor());
-            IEnumerator cor()
-            {
-                while (isInsideShop && Data.Coin.I() > 1)
-                {
-                    yield return A.Wfs025;
-                    Data.Coin.Set(Data.Coin.I() - 1);
-                    A.CC.HudCoin(Data.Coin.I());
-                    shop.SetPrice(shop.currentPrice - 1);
-
-                    if (shop.currentPrice == 0)
-                    {
-                        UpgradeTrimmer();
-                        shop.currentPrice = 10;
-                    }
-                }
-            }
+            onEnterShop?.Invoke(this);
         }
 
         if (other.CompareTag("Coin"))
         {
             other.GetComponent<Collider>().enabled = false;
             Canvas canvas = other.GetComponentInChildren<Canvas>();
-            StartCoroutine(cor());
-            IEnumerator cor()
-            {
-                yield return new WaitForSeconds(0.9f);
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-                float duration = 1f;
-                Transform rect = canvas.transform.Child(0);
-                Vector2 start = rect.transform.position;
-                Vector2 target = coinImageRect.transform.position;
-                rect.transform.position = Camera.main.WorldToScreenPoint(gameObject.transform.position);
-                rect.localScale = Vector3.one * 0.5f;
-                for (float t = 0; t < duration; t += Time.deltaTime)
-                {
-                    rect.transform.position = Vector2.Lerp(start, target, AnimationCurve.EaseInOut(0, 0, 1, 1).Evaluate(t / duration));
-                    yield return null;
-                }
+            // canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var coin = canvas.transform.Child(0);
+            // coin.localScale *= 0.4f;
 
-                Data.Coin.Set(Data.Coin.I() + 1);
-                // print(Data.Coin.I)
-                A.CC.HudCoin(Data.Coin.I());
-                Destroy(other.gameObject);
-            }
+            bool isComplete = false;
+            coin.transform.DOShakePosition(0.5f, 3, 20).onComplete += () => isComplete = true;
+            coin.DOMove(coinSpawn.position, 0.5f)
+                .SetEase(Ease.OutBack).OnComplete(() =>
+                {
+                    Data.Coin.Set(Data.Coin.I() + 1);
+                    A.CC.HudCoin(Data.Coin.I());
+                    Destroy(other.gameObject);
+                }).WaitForCompletion(isComplete);
+
         }
     }
     private void OnTriggerExit(Collider other)
@@ -171,6 +153,7 @@ public class Trimmer : MonoBehaviour
         if (other.CompareTag("Shop"))
         {
             isInsideShop = false;
+            onExitShop?.Invoke(this);
         }
     }
 }

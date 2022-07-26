@@ -8,7 +8,7 @@ using GameAnalyticsSDK;
 
 public enum GameState { Starting, Playing, Pause, LevelCompleted, GameOver, Settings, Shifting }
 
-public enum Data { IsWin, Score, Best, Level, Diamond, Coin, PlayerName, IsVibration, PlayerSkinIdx, LevelIdx }
+public enum Data { IsWin, Score, Best, Level, Diamond, Coin, PlayerName, IsVibration, PlayerSkinIdx, LevelIdx, ShopPrice }
 
 public enum FollowType { None, Hud, HudPointer, HudPointerOff, Follow, FollowPointer, FollowPointerOff }
 
@@ -23,7 +23,7 @@ public class GameController : Singleton<GameController>
 
     public static bool IsWin { get { return Data.IsWin.B(); } }
 
-    public static int Level, Diamond, Coin, Kills, Life, PlayerSkinIdx;
+    public static int Level, Diamond, Coin, Kills, Life, PlayerSkinIdx, ShopPrice;
 
     public static string PlayerName;
 
@@ -41,6 +41,7 @@ public class GameController : Singleton<GameController>
         { Data.IsVibration, true },
         { Data.PlayerSkinIdx, 0 },
         { Data.LevelIdx, -1 },
+        { Data.ShopPrice,0}
     };
 
     [Header("UI")]
