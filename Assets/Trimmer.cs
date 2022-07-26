@@ -15,7 +15,7 @@ public class Trimmer : MonoBehaviour
     [Header("ParticleSystem")]
     public ParticleSystem grassCutMasPS;
 
-    float maxSlowness = 10f;
+    float maxSlowness = 4f;
     // private bool[,] visited = new bool[100, 100];
     float slowness;
     float slowRate = 1f;
@@ -29,11 +29,17 @@ public class Trimmer : MonoBehaviour
 
     public event System.Action<Trimmer> onEnterShop;
     public event System.Action<Trimmer> onExitShop;
+
+
+
+
+    private AudioSource audioSource;
+
     // Start is called before the first frame update
     void Start()
     {
         SetTrimmer(Data.PlayerSkinIdx.I());
-
+        audioSource = GetComponentInChildren<AudioSource>();
     }
 
     // Update is called once per frame
@@ -41,6 +47,8 @@ public class Trimmer : MonoBehaviour
     {
         if (!A.IsPlaying) return;
 
+        if (!audioSource.isPlaying)
+            audioSource.Play();
 
         grassCutMasPS.transform.position = fan.transform.position;
 
@@ -75,12 +83,14 @@ public class Trimmer : MonoBehaviour
     {
         Data.PlayerSkinIdx.Set(Data.PlayerSkinIdx.I() + 1);
         SetTrimmer(Data.PlayerSkinIdx.I());
-        sharpness += 1;
+        // sharpness += 1;
 
     }
 
     void SetTrimmer(int idx)
     {
+
+        sharpness = idx;
         for (int i = 0; i < fan.childCount; i++)
         {
             if (i == idx)
@@ -93,6 +103,8 @@ public class Trimmer : MonoBehaviour
 
     public void MoveAt(Vector3 position)
     {
+
+        position.y = Mathf.Clamp(position.y, 1, Mathf.Infinity);
         // fan.position = position;
         var targetRotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
 

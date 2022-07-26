@@ -383,8 +383,8 @@ Shader "Custom/BotWGrass"
 
 					// Create blade segments by adding two vertices at once.
 					float progress = (1-grassVisibility);
-					pos = mul(windMatrix,pos);
-                    pos= lerp(pos,pos + float3(sin(_Time.y*progress*0.1) ,lerp(-1,-5,progress),0) ,progress);
+					
+                    pos= lerp(pos,mul(windMatrix, pos + float3(sin(_Time.y*progress*0.1) ,lerp(-1,-5,progress),0)) ,progress);
 
 					for (int i = 0; i <BLADE_SEGMENTS ; ++i)
 					{

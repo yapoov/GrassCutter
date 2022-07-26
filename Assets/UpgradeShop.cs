@@ -35,7 +35,7 @@ public class UpgradeShop : MonoBehaviour
 
         SetPrice(currentPrice);
 
-        if (Data.PlayerSkinIdx.I() >= priceProgression.Count)
+        if (Data.PlayerSkinIdx.I() >= priceProgression.Count - 1)
         {
             DisableShop();
         }
@@ -114,7 +114,8 @@ public class UpgradeShop : MonoBehaviour
         coinIconTf.Gc<Image>().color = Col.gray;
         transform.GetChild(2).Gc<Image>().color = Col.gray;
         costText.text = "";
-        sawRotSpeed = 0;
+        // sawRotSpeed = 0;
+        sawIcon.gameObject.SetActive(false);
     }
 
 
