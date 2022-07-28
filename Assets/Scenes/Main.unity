@@ -6460,7 +6460,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 548467776}
   m_LocalRotation: {x: -0.7888477, y: -0.61458874, z: -0, w: 0}
-  m_LocalPosition: {x: -3.81, y: 9.23, z: 0.5954708}
+  m_LocalPosition: {x: -13.33, y: 22.35, z: 0.5954708}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 305939204}
@@ -12038,6 +12038,17 @@ RectTransform:
   m_AnchoredPosition: {x: 540, y: -1160}
   m_SizeDelta: {x: 1000, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &894358551 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7082965377016322160, guid: 40fd0353227a7e4409009e408ae6c913, type: 3}
+  m_PrefabInstance: {fileID: 6565984081920081880}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d49819f9227ce3e4d8c9eeaa73c3c928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &990024503
 GameObject:
   m_ObjectHideFlags: 0
@@ -12860,7 +12871,7 @@ MonoBehaviour:
   gameOverComplete: {fileID: 0}
   gameOverUnCompleted: {fileID: 6461162588643034036}
   newBest: {fileID: 0}
-  levelCompleted: {fileID: 0}
+  levelCompleted: {fileID: 894358551}
   pause: {fileID: 0}
   hudTime: {fileID: 0}
   hudKills: {fileID: 0}
