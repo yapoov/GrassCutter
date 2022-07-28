@@ -103,14 +103,10 @@ public class Trimmer : MonoBehaviour
 
     public void MoveAt(Vector3 position)
     {
-
         position.y = Mathf.Clamp(position.y, 1, Mathf.Infinity);
-        // fan.position = position;
         var targetRotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
-
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1 - Mathf.Pow(slowRate, Time.deltaTime));
-        // fan.position = position;
-        // rod.up = fan.position -
+
         position.z = rod.position.z;
         var targetPos = position + rod.up * 2.189f;
         Vector3 dir = (targetPos - rod.position);
