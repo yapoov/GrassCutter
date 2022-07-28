@@ -70,9 +70,12 @@ public class UpgradeShop : MonoBehaviour
 
         var coin = Instantiate(coinPf, trimmer.coinSpawn.position, Q.O);
         coin.Gc<Collider>().enabled = false;
+
+
+
         coin
         .transform
-        .DOMove(coinIconTf.position, 0.5f)
+        .DOMove(coinIconTf.position, 0.1f)
         .SetEase(Ease.InSine)
         .OnComplete(() =>
         {
@@ -90,6 +93,8 @@ public class UpgradeShop : MonoBehaviour
             Destroy(coin);
             AddCoin(trimmer);
         });
+
+
     }
 
     // Update is called once per frame

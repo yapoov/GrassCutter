@@ -368,7 +368,7 @@ Shader "Custom/BotWGrass"
 					float2 windSample = (tex2Dlod(_WindMap, float4(windUV, 0, 0)).xy * 2 - 1) * length(_WindVelocity);
 
 					float3 windAxis = normalize(float3(windSample.x, windSample.y, 0));
-					float3x3 windMatrix = angleAxis3x3(UNITY_PI * windSample, windAxis);
+					float3x3 windMatrix = angleAxis3x3(UNITY_PI * windSample , windAxis);
 
 					// Transform the grass blades to the correct tangent space.
 					float3x3 baseTransformationMatrix = mul(tangentToLocal, randRotMatrix);

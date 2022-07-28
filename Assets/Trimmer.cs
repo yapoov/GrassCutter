@@ -145,14 +145,16 @@ public class Trimmer : MonoBehaviour
             // coin.localScale *= 0.4f;
 
             bool isComplete = false;
-            coin.transform.DOShakePosition(0.5f, 3, 20).onComplete += () => isComplete = true;
-            coin.DOMove(coinSpawn.position, 0.5f)
-                .SetEase(Ease.OutBack).OnComplete(() =>
-                {
-                    Data.Coin.Set(Data.Coin.I() + 1);
-                    A.CC.HudCoin(Data.Coin.I());
-                    Destroy(other.gameObject);
-                }).WaitForCompletion(isComplete);
+            coin.transform.DOJump(coin.transform.position + Vector3.forward * -1f, 1f, 1, 0.9f).SetEase(Ease.InOutSine).OnComplete(() =>
+            {
+                coin.DOMove(coinSpawn.position, 0.5f)
+                    .SetEase(Ease.OutBack).OnComplete(() =>
+                    {
+                        Data.Coin.Set(Data.Coin.I() + 1);
+                        A.CC.HudCoin(Data.Coin.I());
+                        Destroy(other.gameObject);
+                    }).WaitForCompletion(isComplete);
+            });
 
         }
     }

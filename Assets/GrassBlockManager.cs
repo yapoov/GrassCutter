@@ -21,6 +21,7 @@ public class GrassBlockManager : Singleton<GrassBlockManager>
             var spawnedBlock = Instantiate(grassBlockPf, nextSpawnPos, Quaternion.identity);
             spawnedBlocks.Add(spawnedBlock);
             spawnedBlock.Gcic<GrassPlane>().coinSpawnNum = (i + 1) * 5;
+            spawnedBlock.Gcic<GrassPlane>().id = i;
             spawnedBlock.GetComponentInChildren<GrassPlane>().SetData(new GrassPlaneData { color = hardnessGradient.Evaluate((float)i / spawnNum), hardness = i });
             nextSpawnPos += Vector3.right * 10 * grassBlockPf.transform.localScale.x;
 
