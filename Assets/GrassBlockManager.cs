@@ -9,7 +9,7 @@ public class GrassBlockManager : Singleton<GrassBlockManager>
     public Transform startTf;
     public Gradient hardnessGradient;
 
-
+    public Transform playerTf;
     List<GameObject> spawnedBlocks = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
@@ -26,11 +26,19 @@ public class GrassBlockManager : Singleton<GrassBlockManager>
             nextSpawnPos += Vector3.right * 10 * grassBlockPf.transform.localScale.x;
 
         }
-
+        Vector3 offset = playerTf.position - startTf.position;
         foreach (var item in spawnedBlocks)
         {
             item.SetActive(false);
         }
+
+        A.GC.OnStarted += () =>
+        {
+
+            if (GameController.Level - 1 < spawnedBlocks.Count)
+                playerTf.position = spawnedBlocks[GameController.Level - 1].transform.position + offset;
+        };
+
 
     }
 

@@ -127,6 +127,7 @@ public class GameController : Singleton<GameController>
 
     public string screenshotName;
 
+    public event System.Action OnStarted;
     void Awake()
     {
         Application.targetFrameRate = 60;
@@ -182,6 +183,8 @@ public class GameController : Singleton<GameController>
         A.CC.HudLevelBar(Level);
         A.LS.Init();
         OnGameStarted();
+        OnStarted?.Invoke();
+
     }
 
     void Update()

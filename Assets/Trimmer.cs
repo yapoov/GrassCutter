@@ -98,6 +98,11 @@ public class Trimmer : MonoBehaviour
             else
                 fan.Child(i).gameObject.SetActive(false);
         }
+        Vector3 startScale = fan.Child(idx).transform.localScale;
+        fan.Child(idx).transform.DOScale(startScale * 1.5f, 0.5f).SetEase(Ease.InBounce).OnComplete(() =>
+        {
+            fan.Child(idx).transform.DOScale(startScale, 0.5f).SetEase(Ease.OutBounce);
+        });
     }
 
 

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LevelSpawner : Singleton<LevelSpawner>
 {
+    public Transform playerTf;
     public List<Level> levels;
     public void Init()
     {
@@ -12,6 +13,8 @@ public class LevelSpawner : Singleton<LevelSpawner>
     }
     public void LoadLevel()
     {
+
+
         //
     }
     int GetLevelIdx()

@@ -27,7 +27,7 @@ public class UpgradeShop : MonoBehaviour
     void Start()
     {
 
-        startPos = upgradeTextTf.transform.position;
+        startPos = upgradeTextTf.transform.localPosition;
 
         if (Data.PlayerSkinIdx.I() == 0 && Data.ShopPrice.I() == 0)
             Data.ShopPrice.Set(priceProgression[0]);
@@ -101,7 +101,7 @@ public class UpgradeShop : MonoBehaviour
     void Update()
     {
 
-        upgradeTextTf.transform.position = startPos + Vector3.up * 0.2f * Mathf.Cos(Time.time);
+        upgradeTextTf.localPosition = startPos + Vector3.up * 0.2f * Mathf.Cos(Time.time);
         sawIcon.transform.rotation = Quaternion.Euler(0, 0, sawRotSpeed) * sawIcon.transform.rotation;
     }
 
