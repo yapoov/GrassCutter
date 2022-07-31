@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -159,7 +159,7 @@ MonoBehaviour:
   coinIconTf: {fileID: 2092613544}
   costText: {fileID: 1203358753}
   sawIcon: {fileID: 196557806}
-  priceProgression: 1e0000005a000000
+  priceProgression: 1e0000003c0000005a000000
   currentPrice: 9
 --- !u!114 &62160544
 MonoBehaviour:
@@ -6460,7 +6460,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 548467776}
   m_LocalRotation: {x: -0.7888477, y: -0.61458874, z: -0, w: 0}
-  m_LocalPosition: {x: -13.33, y: 22.35, z: 0.5954708}
+  m_LocalPosition: {x: -9.459, y: 3.567, z: 0.5954708}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 305939204}
@@ -13702,7 +13702,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
-  m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2

@@ -21,27 +21,20 @@ public class Trimmer : MonoBehaviour
     float slowRate = 1f;
     [HideInInspector]
     public bool isInsideShop = false;
-
-
     public Transform coinSpawn;
-
     private int currentTrimmerIdx;
-
     public event System.Action<Trimmer> onEnterShop;
     public event System.Action<Trimmer> onExitShop;
 
-
-
-
     private AudioSource audioSource;
-
+    private float trimmerRadius;
     // Start is called before the first frame update
     void Start()
     {
         SetTrimmer(Data.PlayerSkinIdx.I());
         audioSource = GetComponentInChildren<AudioSource>();
-    }
 
+    }
     // Update is called once per frame
     void Update()
     {
@@ -59,7 +52,6 @@ public class Trimmer : MonoBehaviour
 
         if (Physics.Raycast(fan.position, Vector3.forward, out hit, 10, 1 << 4))
         {
-
             hardness = hit.collider.Gc<GrassPlane>().hardness;
         }
 
@@ -67,11 +59,7 @@ public class Trimmer : MonoBehaviour
         {
             targetRot = -1;
         }
-
-
-
         fan.rotation = Quaternion.Euler(0, 0, targetRot) * fan.rotation;
-
         var mainStartColor = grassCutMasPS.startColor;
         mainStartColor.a = 1 - slowRate;
         grassCutMasPS.startColor = mainStartColor;
@@ -103,12 +91,14 @@ public class Trimmer : MonoBehaviour
         {
             fan.Child(idx).transform.DOScale(startScale, 0.5f).SetEase(Ease.OutBounce);
         });
+
+        trimmerRadius = fan.Child(idx).Gc<MeshRenderer>().bounds.extents.y;
     }
 
 
     public void MoveAt(Vector3 position)
     {
-        position.y = Mathf.Clamp(position.y, 1, Mathf.Infinity);
+        position.y = Mathf.Clamp(position.y, 0 + trimmerRadius, Mathf.Infinity);
         var targetRotation = Quaternion.LookRotation(-Vector3.forward, transform.position - position);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 1 - Mathf.Pow(slowRate, Time.deltaTime));
 

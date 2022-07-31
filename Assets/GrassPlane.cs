@@ -66,12 +66,12 @@ public class GrassPlane : MonoBehaviour
             {
                 for (int j = 0; j < texToCheck.width; j++)
                 {
-                    if (texToCheck.GetPixel(i, j).grayscale < 0.1f)
+                    if (texToCheck.GetPixel(i, j).grayscale < 0.2f)
                         blackCount++;
                 }
             }
 
-            if ((float)blackCount / (texToCheck.width * texToCheck.height) > 0.96)
+            if ((float)blackCount / (texToCheck.width * texToCheck.height) > 0.98)
             {
                 A.LevelCompleted();
             }

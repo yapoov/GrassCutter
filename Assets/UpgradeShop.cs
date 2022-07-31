@@ -35,7 +35,7 @@ public class UpgradeShop : MonoBehaviour
 
         SetPrice(currentPrice);
 
-        if (Data.PlayerSkinIdx.I() >= priceProgression.Count - 1)
+        if (Data.PlayerSkinIdx.I() > priceProgression.Count - 1)
         {
             DisableShop();
         }
@@ -70,8 +70,6 @@ public class UpgradeShop : MonoBehaviour
 
         var coin = Instantiate(coinPf, trimmer.coinSpawn.position, Q.O);
         coin.Gc<Collider>().enabled = false;
-
-
 
         coin
         .transform
