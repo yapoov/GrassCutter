@@ -973,6 +973,8 @@ MonoBehaviour:
   rod: {fileID: 3344020123292258966}
   extension: {fileID: 2761208236306131544}
   grassCutMasPS: {fileID: 0}
+  isInsideShop: 0
+  coinSpawn: {fileID: 0}
 --- !u!1 &3107301193070431149
 GameObject:
   m_ObjectHideFlags: 0
@@ -1268,7 +1270,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: d4a27102a93c1fd4fa04ebc0f73d20ef, type: 3}
+  - {fileID: 2100000, guid: 512b299069b7ffb4fa81675444536ae3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1809,7 +1811,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 5561349426305759274, guid: d4a27102a93c1fd4fa04ebc0f73d20ef, type: 3}
+  - {fileID: 2100000, guid: 2af2366eb2aeefc46a998e4d022e9d94, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
