@@ -14,7 +14,7 @@ public class Trimmer : MonoBehaviour
     public Transform extension;
     [Header("ParticleSystem")]
     public ParticleSystem grassCutMasPS;
-
+    public ParticleSystem additionalParticleSystem;
     float maxSlowness = 4f;
     // private bool[,] visited = new bool[100, 100];
     float slowness;
@@ -23,18 +23,26 @@ public class Trimmer : MonoBehaviour
     public bool isInsideShop = false;
     public Transform coinSpawn;
     private int currentTrimmerIdx;
+
+
     public event System.Action<Trimmer> onEnterShop;
     public event System.Action<Trimmer> onExitShop;
 
     private AudioSource audioSource;
     private float trimmerRadius;
+
+    Vector2 origin;
     // Start is called before the first frame update
     void Start()
     {
+
+
         SetTrimmer(Data.PlayerSkinIdx.I());
         audioSource = GetComponentInChildren<AudioSource>();
 
     }
+
+    int[,] visited = new int[100, 100];
     // Update is called once per frame
     void Update()
     {
@@ -60,10 +68,20 @@ public class Trimmer : MonoBehaviour
             targetRot = -1;
         }
         fan.rotation = Quaternion.Euler(0, 0, targetRot) * fan.rotation;
+
+
         var mainStartColor = grassCutMasPS.startColor;
         mainStartColor.a = 1 - slowRate;
         grassCutMasPS.startColor = mainStartColor;
+
+
+
+
         slowRate = Mathf.Lerp(slowRate, Mathf.Clamp01(Mathf.Clamp(hardness - sharpness, 0, Mathf.Infinity) / maxSlowness), Time.deltaTime * 5);
+
+
+
+
     }
 
 
