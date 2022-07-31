@@ -109,6 +109,8 @@ public class UpgradeShop : MonoBehaviour
     {
         currentPrice = value;
         costText.text = "" + value;
+
+        Data.ShopPrice.Set(value);
     }
 
 

@@ -24,7 +24,8 @@ public class CameraController : Singleton<CameraController>
     Vector3 offset, deltaOffset;
     private Vector3 currentVelocity;
 
-
+    float max = Mathf.Infinity;
+    bool maxFound = false;
     void Start()
     {
         IsZoom = false;
@@ -40,13 +41,33 @@ public class CameraController : Singleton<CameraController>
                 var target = offset + deltaOffset + followTf.position;
                 if (lockToHorizontalAxis)
                     target.y = transform.position.y;
-                target.x = Mathf.Clamp(target.x, -10, (GameController.Level - 1) * 10.5f - 3);
+
+
+                var viewPort = Camera.main.WorldToViewportPoint(GrassBlockManager.currentlvlEndPoint);
+
+
+                // if(viewPortx<1)
+                target.x = Mathf.Clamp(target.x, -10, max);
+
+                if (viewPort.x <= 1)
+                {
+                    if (!maxFound)
+                    {
+
+                        max = transform.position.x;
+                        maxFound = true;
+                    }
+                }
+
+
                 transform.position = Vector3.SmoothDamp(
                     transform.position,
                     target,
                     ref currentVelocity,
                     smoothTime
                 );
+
+
             }
             else
             {
