@@ -66,14 +66,20 @@ public class Trimmer : MonoBehaviour
         if (isInsideShop)
         {
             targetRot = -1;
+
+
+            
         }
-        fan.rotation = Quaternion.Euler(0, 0, targetRot) * fan.rotation;
+
+        var spinFxColor = additionalParticleSystem.startColor;
+        spinFxColor.a = Mathf.InverseLerp(0,3000,-targetRot);
+        additionalParticleSystem.startColor = spinFxColor;
+    fan.rotation = Quaternion.Euler(0, 0, targetRot) * fan.rotation;
 
 
         var mainStartColor = grassCutMasPS.startColor;
         mainStartColor.a = 1 - slowRate;
         grassCutMasPS.startColor = mainStartColor;
-
 
 
 
