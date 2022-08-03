@@ -61,7 +61,9 @@ public class FacebookSDKInitializer : MonoBehaviour
 
     private void RegisterAppForNetworkAttribution()
     {
+#if UNITY_IOS
         SkAdNetworkBinding.SkAdNetworkRegisterAppForNetworkAttribution();
+#endif
     }
 #endif
-}
+    }
