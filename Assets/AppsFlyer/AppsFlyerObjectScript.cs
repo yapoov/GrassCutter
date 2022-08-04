@@ -48,6 +48,7 @@ public class AppsFlyerObjectScript : MonoBehaviour , IAppsFlyerConversionData
         AppsFlyer.AFLog("didReceiveConversionData", conversionData);
         Dictionary<string, object> conversionDataDictionary = AppsFlyer.CallbackStringToDictionary(conversionData);
         // add deferred deeplink logic here
+        AppsFlyer.sendEvent("af_integration_success", new Dictionary<string, string>());
     }
 
     public void onConversionDataFail(string error)
