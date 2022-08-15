@@ -109,9 +109,9 @@ public class GameController : Singleton<GameController>
 
     [Header("Player Settings Change")]
 
-    public string companyName = "Black Candy";
+    public string companyName = "Fat Monster Games";
 
-    public string companyWebSite = "blackcandy.io";
+    public string companyWebSite = "boldchb.github.io";
 
     public string productName = "Game Name";
 
