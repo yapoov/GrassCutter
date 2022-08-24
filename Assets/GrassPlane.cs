@@ -38,9 +38,9 @@ public class GrassPlane : MonoBehaviour
         //             Graphics.Blit(savedTex, renderTexture);
         //         }
         // }
-        renderCamera = GetComponentInChildren<Camera>();
+        renderCamera = orthoCamera;
         renderCamera.targetTexture = renderTexture;
-
+        transform.localPosition = new Vector3(-transform.parent.position.x / 2f, transform.localPosition.y, transform.localPosition.z);
 
         GetComponent<Renderer>().material.SetTexture("_GrassMap", renderTexture);
         orthoCamera.orthographicSize = Mathf.Max(GetComponent<MeshRenderer>().bounds.size.x, GetComponent<MeshRenderer>().bounds.size.y) / 2;
@@ -48,8 +48,10 @@ public class GrassPlane : MonoBehaviour
         for (int i = 0; i < coinSpawnNum; i++)
         {
 
-            Instantiate(coin, transform.TransformPoint(new Vector3(Rnd.Rng(-5f, 5f), 0.1f, Rnd.Rng(-5f, 5f))), Q.O);
+            Instantiate(coin, transform.parent.TransformPoint(new Vector3(Rnd.Rng(-5f, 5f), Rnd.Rng(-5f, 5f), -0.1f)), Q.O);
         }
+
+
     }
 
     private void FixedUpdate()
